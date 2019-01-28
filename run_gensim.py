@@ -1,5 +1,6 @@
 import os
 import sys
+from gensim.models import Word2Vec
 from gensim.utils import simple_preprocess
 import pandas as pd
 
@@ -16,7 +17,6 @@ if __name__ == "__main__":
             if row["is_duplicate"] == 0:
                 corpus.append(tokenize(row["question2"]))
         
-        from gensim.models import Word2Vec
         w2v = Word2Vec(size=150, window=10, min_count=2, sg=1, workers=10)
 
         print("Creating training data...")
