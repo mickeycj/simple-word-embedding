@@ -18,6 +18,7 @@ if __name__ == "__main__":
             if row["is_duplicate"] == 0:
                 corpus.append(tokenize(row["question2"]))
         
+        print("Creating model...")
         w2v = Word2Vec(size=150, window=10, min_count=2, sg=1, workers=10)
 
         print("Creating training data...")
@@ -26,7 +27,7 @@ if __name__ == "__main__":
         print("Training...")
         w2v.train(sentences=corpus, total_examples=len(corpus), epochs=w2v.epochs)
         
-        print("Creating model...")
+        print("Saving model...")
         model_path = "./models/"
         if not os.path.exists(model_path):
             os.mkdir(model_path)
