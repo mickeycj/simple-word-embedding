@@ -1,0 +1,6 @@
+# code specific
+/__pycache__
+/.vscode
+
+# macOS specific
+.DS_Store
