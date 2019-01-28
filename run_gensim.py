@@ -8,7 +8,8 @@ def tokenize(document):
     return simple_preprocess(str(document).encode("utf-8"))
 
 if __name__ == "__main__":
-    if sys.argv[1] == "train":
+    command = sys.argv[1]
+    if command == "train":
         print("Creating corpus...")
         corpus = []
         documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].sample(frac=1).reset_index(drop=True)
@@ -32,7 +33,7 @@ if __name__ == "__main__":
         w2v.save("{}{}".format(model_path, "gensim_w2v.model"))
 
         print("Training finished!")
-    else:
+    elif command == "test":
         print("Creating test words...")
         documents = pd.read_csv("./data/test.csv")[["question1"]].sample(n=3).reset_index(drop=True)
         documents = map(lambda index__row: tokenize(index__row[1]["question1"]), documents)
@@ -46,3 +47,5 @@ if __name__ == "__main__":
                 print(word)
                 for word, sim in w2v.wv.most_similar(positive=word, topn=5):
                     print(word, sim)
+    else:
+        print("\'{}\' command not found!".format(command))
