@@ -36,8 +36,8 @@ if __name__ == "__main__":
         print("Training finished!")
     elif command == "test":
         print("Creating test words...")
-        documents = pd.read_csv("./data/test.csv")[["question1"]].sample(n=3).reset_index(drop=True)
-        documents = map(lambda index__row: tokenize(index__row[1]["question1"]), documents)
+        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].sample(n=3).reset_index(drop=True)
+        documents = map(lambda index__row: tokenize(index__row[1]["question1"]), documents.iterrows())
 
         print("Loading model...")
         w2v = Word2Vec.load("./models/gensim_w2v.model")
