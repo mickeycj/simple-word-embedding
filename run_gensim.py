@@ -8,7 +8,7 @@ def tokenize(document):
 
 if __name__ == "__main__":
     if sys.argv[1] == "train":
-        print("Creating corpus.`..")
+        print("Creating corpus...")
         corpus = []
         documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].sample(frac=1).reset_index(drop=True)
         for index, row in documents.iterrows():
