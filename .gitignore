@@ -1,6 +1,7 @@
 # code specific
 /__pycache__
 /.vscode
+/data
 
 # macOS specific
 .DS_Store

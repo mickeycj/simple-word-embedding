@@ -6,9 +6,9 @@ class Word2Vec():
 
     def __init__(self, settings):
         self.n = settings["n"]
-        self.epochs = settings["epochs"]
         self.window_size = settings["window_size"]
         self.learning_rate = settings["learning_rate"]
+        self.epochs = settings["epochs"]
     
     def word2onehot(self, word):
         word_vec = [0 for i in range(0, self.v_count)]
@@ -23,13 +23,15 @@ class Word2Vec():
             for word in row:
                 word_counts[word] += 1
         self.v_count = len(word_counts.keys())
+        print("Unique words: {}".format(self.v_count))
 
         self.word_list = sorted(list(word_counts.keys()), reverse=False)
         self.word_index = dict((word, i) for i, word in enumerate(self.word_list))
         self.index_word = dict((i, word) for i, word in enumerate(self.word_list))
 
         training_data = []
-        for sentence in corpus:
+        for idx, sentence in enumerate(corpus):
+            print("{}. {}".format(idx, sentence))
             sentence_length = len(sentence)
             for i, word in enumerate(sentence):
                 w_target = self.word2onehot(sentence[i])
@@ -75,7 +77,7 @@ class Word2Vec():
                 self.loss += -np.sum([u[word.index(1)] for word in w_c]) + len(w_c) * np.log(np.sum(np.exp(u)))
                 self.loss += -2 * np.log(len(w_c)) - np.sum([u[word.index(1)] for word in w_c]) + len(w_c) * np.log(np.sum(np.exp(u)))
             
-            print("EPOCH: {} | LOSS: {}".format(i + 1, self.loss))
+                print("EPOCH: {} | LOSS: {}".format(i + 1, self.loss))
     
     def word_sim(self, word, top_n):
         w1_index = self.word_index[word]
