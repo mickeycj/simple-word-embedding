@@ -1,5 +1,6 @@
 import os
 import sys
+from gensim.models import KeyedVectors
 from gensim.models import Word2Vec
 from gensim.utils import simple_preprocess
 import nltk
@@ -40,6 +41,10 @@ if __name__ == "__main__":
         if not os.path.exists(model_path):
             os.mkdir(model_path)
         w2v.save("{}{}".format(model_path, "gensim_w2v.model"))
+        kv_path = "./kv/"
+        if not os.path.exists(kv_path):
+            os.mkdir(kv_path)
+        w2v.wv.save("{}{}".format(kv_path, "gensim_w2v.kv"))
 
         print("Training finished!")
     elif command == "test":
@@ -48,7 +53,7 @@ if __name__ == "__main__":
         documents = map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows())
 
         print("Loading model...")
-        w2v = Word2Vec.load("./models/gensim_w2v.model")
+        w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
         print("Finding similar words...")
         for document in documents:

@@ -2,6 +2,7 @@
 /__pycache__
 /.vscode
 /data
+/kv
 /models
 
 # macOS specific
