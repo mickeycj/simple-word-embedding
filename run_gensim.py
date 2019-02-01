@@ -2,7 +2,15 @@ import os
 import sys
 from gensim.models import Word2Vec
 from gensim.utils import simple_preprocess
+import nltk
 import pandas as pd
+
+english_words = set(nltk.corpus.words.words())
+english_stop_words = nltk.corpus.stopwords.words("english")
+
+def preprocess(text):
+    return " ".join(w for w in nltk.wordpunct_tokenize(text)
+        if w.lower() in english_words and w.lower() not in english_stop_words or not w.isalpha())
 
 def tokenize(document):
     return simple_preprocess(str(document).encode("utf-8"))
@@ -12,11 +20,11 @@ if __name__ == "__main__":
     if command == "train":
         print("Creating corpus...")
         corpus = []
-        documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].sample(frac=1).reset_index(drop=True)
+        documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].dropna().sample(frac=1).reset_index(drop=True)
         for index, row in documents.iterrows():
-            corpus.append(tokenize(row["question1"]))
+            corpus.append(tokenize(preprocess(row["question1"])))
             if row["is_duplicate"] == 0:
-                corpus.append(tokenize(row["question2"]))
+                corpus.append(tokenize(preprocess(row["question2"])))
         
         print("Creating model...")
         w2v = Word2Vec(size=150, window=10, min_count=2, sg=1, workers=10)
@@ -36,8 +44,8 @@ if __name__ == "__main__":
         print("Training finished!")
     elif command == "test":
         print("Creating test words...")
-        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].sample(n=3).reset_index(drop=True)
-        documents = map(lambda index__row: tokenize(index__row[1]["question1"]), documents.iterrows())
+        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=3).reset_index(drop=True)
+        documents = map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows())
 
         print("Loading model...")
         w2v = Word2Vec.load("./models/gensim_w2v.model")
@@ -46,7 +54,7 @@ if __name__ == "__main__":
         for document in documents:
             for word in document:
                 print(word)
-                for word, sim in w2v.wv.most_similar(positive=word, topn=5):
+                for word, sim in w2v.wv.most_similar(positive=word, topn=3):
                     print(word, sim)
     else:
         print("\'{}\' command not found!".format(command))
