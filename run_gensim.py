@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
         print("Loading testing documents...")
         documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=2).reset_index(drop=True)
-        testing_docs = list(map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows()))
+        testing_docs = list(map(lambda index__row: set(tokenize(preprocess(index__row[1]["question1"]))), documents.iterrows()))
 
         if command == "test_word_sim":
             print("Finding similar words...")
