@@ -46,19 +46,23 @@ if __name__ == "__main__":
         w2v.wv.save("{}{}".format(kv_path, "gensim_w2v.kv"))
 
         print("Training finished!")
-    elif command == "test":
+    elif command == "test_word_sim" or command == "test_doc_sim":
         print("Creating test words...")
-        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=3).reset_index(drop=True)
-        documents = map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows())
+        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=2).reset_index(drop=True)
+        documents = list(map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows()))
 
         print("Loading model...")
         w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
-        print("Finding similar words...")
-        for document in documents:
-            for word in document:
-                print(word)
-                for word, sim in w2v.wv.most_similar(positive=word, topn=3):
-                    print(word, sim)
+        if command == "test_word_sim":
+            print("Finding similar words...")
+            for document in documents:
+                for word in document:
+                    print(word)
+                    for word, sim in w2v.wv.most_similar(positive=word, topn=3):
+                        print(word, sim)
+        else:
+            print("Comparing two documents distance...")
+            print(w2v.wmdistance(documents[0], documents[1]))
     else:
         print("\'{}\' command not found!".format(command))
