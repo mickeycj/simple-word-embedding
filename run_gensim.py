@@ -1,7 +1,6 @@
 import os
 import sys
-from gensim.models import KeyedVectors
-from gensim.models import Word2Vec
+from gensim.models import KeyedVectors, Word2Vec
 from gensim.utils import simple_preprocess
 import nltk
 import pandas as pd
