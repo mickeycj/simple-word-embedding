@@ -18,22 +18,22 @@ def tokenize(document):
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "train":
-        print("Creating corpus...")
-        corpus = []
-        documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].dropna().sample(frac=1).reset_index(drop=True)
-        for index, row in documents.iterrows():
-            corpus.append(tokenize(preprocess(row["question1"])))
-            if row["is_duplicate"] == 0:
-                corpus.append(tokenize(preprocess(row["question2"])))
-        
         print("Creating model...")
         w2v = Word2Vec(size=150, window=10, min_count=2, sg=1, workers=10)
 
-        print("Creating training data...")
-        w2v.build_vocab(corpus)
+        print("Loading training documents...")
+        training_docs = []
+        documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].dropna().sample(frac=1).reset_index(drop=True)
+        for _, row in documents.iterrows():
+            training_docs.append(tokenize(preprocess(row["question1"])))
+            if row["is_duplicate"] == 0:
+                training_docs.append(tokenize(preprocess(row["question2"])))
+
+        print("Building vocabulary...")
+        w2v.build_vocab(training_docs)
 
         print("Training...")
-        w2v.train(sentences=corpus, total_examples=len(corpus), epochs=w2v.epochs)
+        w2v.train(sentences=training_docs, total_examples=len(training_docs), epochs=w2v.epochs)
         
         print("Saving model...")
         model_path = "./models/"
@@ -47,22 +47,24 @@ if __name__ == "__main__":
 
         print("Training finished!")
     elif command == "test_word_sim" or command == "test_doc_sim":
-        print("Creating test words...")
-        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=2).reset_index(drop=True)
-        documents = list(map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows()))
-
         print("Loading model...")
         w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
+        print("Loading testing documents...")
+        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=2).reset_index(drop=True)
+        testing_docs = list(map(lambda index__row: tokenize(preprocess(index__row[1]["question1"])), documents.iterrows()))
+
         if command == "test_word_sim":
             print("Finding similar words...")
-            for document in documents:
+            for document in testing_docs:
                 for word in document:
                     print(word)
                     for word, sim in w2v.wv.most_similar(positive=word, topn=3):
                         print(word, sim)
         else:
             print("Comparing two documents distance...")
-            print(w2v.wmdistance(documents[0], documents[1]))
+            print(documents.iloc[0]["question1"])
+            print(documents.iloc[1]["question1"])
+            print(w2v.wmdistance(testing_docs[0], testing_docs[1]))
     else:
         print("\'{}\' command not found!".format(command))
