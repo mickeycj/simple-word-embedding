@@ -59,7 +59,7 @@ if __name__ == "__main__":
             for document in testing_docs:
                 for word in document:
                     print(word)
-                    for word, sim in w2v.wv.most_similar(positive=word, topn=3):
+                    for word, sim in w2v.wv.most_similar_cosmul(positive=word, topn=3):
                         print(word, sim)
         else:
             print("Comparing two documents distance...")
