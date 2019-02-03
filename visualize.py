@@ -40,8 +40,10 @@ if __name__ == "__main__":
     print("Visualizing documents...")
     first_index = 0
     for index, last_index in enumerate(last_indices):
-        x = [result[0] for result in results[first_index:last_index]]
-        y = [result[1] for result in results[first_index:last_index]]
+        x_list = [result[0] for result in results[first_index:last_index]]
+        y_list = [result[1] for result in results[first_index:last_index]]
+        x = sum(x_list) / len(x_list)
+        y = sum(y_list) / len(y_list)
         plt.scatter(x, y, marker="o", label="Doc. {}".format(index + 1))
         first_index = last_index
     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
