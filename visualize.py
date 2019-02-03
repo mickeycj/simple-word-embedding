@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import nltk
 import pandas as pd
 from sklearn.manifold import TSNE
+import sys
 
 english_words = set(nltk.corpus.words.words())
 english_stop_words = nltk.corpus.stopwords.words("english")
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
     print("Loading documents for visualization...")
-    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=10).reset_index(drop=True)
+    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=1000).reset_index(drop=True)
     last_indices = []
     words = []
     for _, row in documents.iterrows():
@@ -38,13 +39,17 @@ if __name__ == "__main__":
     results = TSNE(n_components=2).fit_transform(vectors)
     
     print("Visualizing documents...")
+    fig = plt.gcf()
+    fig.canvas.set_window_title("Document Representations")
     first_index = 0
     for index, last_index in enumerate(last_indices):
         x_list = [result[0] for result in results[first_index:last_index]]
         y_list = [result[1] for result in results[first_index:last_index]]
-        x = sum(x_list) / len(x_list)
-        y = sum(y_list) / len(y_list)
-        plt.scatter(x, y, marker="o", label="Doc. {}".format(index + 1))
+        if len(x_list) > 0 and len(y_list) > 0:
+            x = sum(x_list) / len(x_list)
+            y = sum(y_list) / len(y_list)
+            plt.scatter(x, y, marker="o", label="Doc. {}".format(index + 1))
         first_index = last_index
-    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
+    if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
+        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
     plt.show()
