@@ -3,7 +3,9 @@ from gensim.utils import simple_preprocess
 import matplotlib.pyplot as plt
 import nltk
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
 import sys
 
 english_words = set(nltk.corpus.words.words())
@@ -21,7 +23,7 @@ if __name__ == "__main__":
     w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
     print("Loading documents for visualization...")
-    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=1000).reset_index(drop=True)
+    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=100).reset_index(drop=True)
     last_indices = []
     words = []
     for _, row in documents.iterrows():
@@ -35,16 +37,20 @@ if __name__ == "__main__":
     print("Creating vectors...")
     vectors = list(map(lambda word: w2v[word], words))
 
+    print("Performing PCA...")
+    scaled_vectors = StandardScaler().fit_transform(vectors)
+    pca_results = PCA(0.85).fit_transform(scaled_vectors)
+
     print("Performing t-SNE...")
-    results = TSNE(n_components=2).fit_transform(vectors)
+    tsne_results = TSNE(n_components=2).fit_transform(pca_results)
     
     print("Visualizing documents...")
     fig = plt.gcf()
     fig.canvas.set_window_title("Document Representations")
     first_index = 0
     for index, last_index in enumerate(last_indices):
-        x_list = [result[0] for result in results[first_index:last_index]]
-        y_list = [result[1] for result in results[first_index:last_index]]
+        x_list = [result[0] for result in tsne_results[first_index:last_index]]
+        y_list = [result[1] for result in tsne_results[first_index:last_index]]
         if len(x_list) > 0 and len(y_list) > 0:
             x = sum(x_list) / len(x_list)
             y = sum(y_list) / len(y_list)
