@@ -23,7 +23,7 @@ if __name__ == "__main__":
     w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
     print("Loading documents for visualization...")
-    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=100).reset_index(drop=True)
+    documents = pd.read_csv("./data/train.csv", dtype=object)[["question1"]].dropna().sample(n=117).reset_index(drop=True)
     last_indices = []
     words = []
     for _, row in documents.iterrows():
