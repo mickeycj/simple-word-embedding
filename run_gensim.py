@@ -19,7 +19,7 @@ if __name__ == "__main__":
     command = sys.argv[1]
     if command == "train":
         print("Creating model...")
-        w2v = Word2Vec(size=150, window=10, min_count=2, sg=1, workers=10)
+        w2v = Word2Vec(size=150, window=10, min_count=1, sg=1, workers=10)
 
         print("Loading training documents...")
         training_docs = []
