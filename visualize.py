@@ -1,3 +1,5 @@
+import sys
+
 from gensim.models import KeyedVectors
 from gensim.utils import simple_preprocess
 import matplotlib.pyplot as plt
@@ -6,9 +8,8 @@ import nltk
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
-import sys
-from umap import UMAP
 
 english_words = set(nltk.corpus.words.words())
 english_stop_words = nltk.corpus.stopwords.words("english")
@@ -61,8 +62,8 @@ if __name__ == "__main__":
     document_vectors = StandardScaler().fit_transform(document_vectors)
     document_vectors = PCA(0.85).fit_transform(document_vectors)
 
-    print("Performing UMAP...")
-    document_vectors = UMAP(n_components=dimension).fit_transform(document_vectors)
+    print("Performing t-SNE...")
+    document_vectors = TSNE(n_components=dimension).fit_transform(document_vectors)
 
     print("Creating document clusters...")
     clustering = KMeans().fit(document_vectors)
