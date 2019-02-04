@@ -60,17 +60,13 @@ if __name__ == "__main__":
     print("Performing t-SNE...")
     tsne_results = TSNE(n_components=2).fit_transform(pca_results)
     
-    print("Visualizing document clusters...")
+    print("Visualizing documents...")
     fig = plt.gcf()
-    fig.canvas.set_window_title("Document Clusters")
+    fig.canvas.set_window_title("Document Representations")
     first_index = 0
-    for index, last_index in enumerate(last_indices):
-        x_list = [result[0] for result in tsne_results[first_index:last_index]]
-        y_list = [result[1] for result in tsne_results[first_index:last_index]]
-        if len(x_list) > 0 and len(y_list) > 0:
-            x = sum(x_list) / len(x_list)
-            y = sum(y_list) / len(y_list)
-            plt.scatter(x, y, marker="o", label="Doc. {}".format(index + 1))
+    times = 0
+    for index, doc_coordinate in enumerate(tsne_results):
+        plt.scatter(doc_coordinate[0], doc_coordinate[1], marker="o", label="Doc. {}".format(index + 1))
         first_index = last_index
     if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
         plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
