@@ -37,16 +37,32 @@ if __name__ == "__main__":
     print("Creating vectors...")
     vectors = list(map(lambda word: w2v[word], words))
 
+    print("Creating document vectors...")
+    document_vectors = []
+    first_index = 0
+    (vector_size,) = w2v[words[0]].shape
+    for last_index in last_indices:
+        vector = []
+        for i in range(vector_size):
+            v_list = [v[i] for v in vectors[first_index:last_index]]
+            if len(v_list) > 0:
+                v = sum(v_list) / len(v_list)
+                vector.append(v)
+        if len(vector) > 0:
+            document_vectors.append(vector)
+        first_index = last_index
+    document_vectors = list(document_vectors)
+
     print("Performing PCA...")
-    scaled_vectors = StandardScaler().fit_transform(vectors)
+    scaled_vectors = StandardScaler().fit_transform(document_vectors)
     pca_results = PCA(0.85).fit_transform(scaled_vectors)
 
     print("Performing t-SNE...")
     tsne_results = TSNE(n_components=2).fit_transform(pca_results)
     
-    print("Visualizing documents...")
+    print("Visualizing document clusters...")
     fig = plt.gcf()
-    fig.canvas.set_window_title("Document Representations")
+    fig.canvas.set_window_title("Document Clusters")
     first_index = 0
     for index, last_index in enumerate(last_indices):
         x_list = [result[0] for result in tsne_results[first_index:last_index]]
