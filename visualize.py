@@ -1,6 +1,7 @@
 from gensim.models import KeyedVectors
 from gensim.utils import simple_preprocess
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import nltk
 import pandas as pd
 from sklearn.cluster import KMeans
@@ -20,6 +21,8 @@ def tokenize(document):
     return simple_preprocess(str(document).encode("utf-8"))
 
 if __name__ == "__main__":
+    dimension = 3 if len(sys.argv) > 1 and sys.argv[1] == "3D" else 2
+
     print("Loading pre-trained word-vectors...")
     w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
@@ -59,7 +62,7 @@ if __name__ == "__main__":
     document_vectors = PCA(0.85).fit_transform(document_vectors)
 
     print("Performing t-SNE...")
-    document_vectors = TSNE(n_components=2).fit_transform(document_vectors)
+    document_vectors = TSNE(n_components=dimension).fit_transform(document_vectors)
 
     print("Creating document clusters...")
     clustering = KMeans().fit(document_vectors)
@@ -71,13 +74,28 @@ if __name__ == "__main__":
             clusters[label] = []
         clusters[label].append(doc_coordinate)
     
-    print("Visualizing document clusters...")
-    fig = plt.gcf()
-    fig.canvas.set_window_title("Document Clusters")
-    for label in clusters.keys():
-        x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
-        y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
-        plt.scatter(x_list, y_list, marker="o", label="Cluster {}".format(label + 1))
-    if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
-        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
-    plt.show()
+    if dimension == 3:
+        print("Visualizing document clusters in 3D...")
+        fig = plt.gcf()
+        fig.canvas.set_window_title("Document Clusters (3D)")
+        ax = fig.add_subplot(111, projection="3d")
+        for label in clusters.keys():
+            x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
+            y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
+            z_list = [doc_coordinate[2] for doc_coordinate in clusters[label]]
+            ax.scatter(x_list, y_list, z_list, marker="o", label="Cluster {}".format(label + 1))
+        if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
+            ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
+        plt.show()
+    else:
+        print("Visualizing document clusters in 2D...")
+        fig = plt.gcf()
+        fig.canvas.set_window_title("Document Clusters (2D)")
+        ax = fig.add_subplot(111)
+        for label in clusters.keys():
+            x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
+            y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
+            ax.scatter(x_list, y_list, marker="o", label="Cluster {}".format(label + 1))
+        if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
+            ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
+        plt.show()
