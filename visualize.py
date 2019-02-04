@@ -83,9 +83,12 @@ if __name__ == "__main__":
             x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
             y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
             z_list = [doc_coordinate[2] for doc_coordinate in clusters[label]]
-            ax.scatter(x_list, y_list, z_list, marker="o", label="Cluster {}".format(label + 1))
-        if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
-            ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
+            x_center = sum(x_list) / len(x_list)
+            y_center = sum(y_list) / len(y_list)
+            z_center = sum(z_list) / len(z_list)
+            color = next(ax._get_lines.prop_cycler)["color"]
+            ax.scatter(x_center, y_center, z_center, marker="o", s=75, color=color)
+            ax.scatter(x_list, y_list, z_list, marker="o", s=15, color=color)
         plt.show()
     else:
         print("Visualizing document clusters in 2D...")
@@ -95,7 +98,9 @@ if __name__ == "__main__":
         for label in clusters.keys():
             x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
             y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
-            ax.scatter(x_list, y_list, marker="o", label="Cluster {}".format(label + 1))
-        if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
-            ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
+            x_center = sum(x_list) / len(x_list)
+            y_center = sum(y_list) / len(y_list)
+            color = next(ax._get_lines.prop_cycler)["color"]
+            ax.scatter(x_center, y_center, marker="o", s=75, color=color)
+            ax.scatter(x_list, y_list, marker="o", s=15, color=color)
         plt.show()
