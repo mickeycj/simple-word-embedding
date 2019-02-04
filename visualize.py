@@ -3,6 +3,7 @@ from gensim.utils import simple_preprocess
 import matplotlib.pyplot as plt
 import nltk
 import pandas as pd
+from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
@@ -54,20 +55,29 @@ if __name__ == "__main__":
     document_vectors = list(document_vectors)
 
     print("Performing PCA...")
-    scaled_vectors = StandardScaler().fit_transform(document_vectors)
-    pca_results = PCA(0.85).fit_transform(scaled_vectors)
+    document_vectors = StandardScaler().fit_transform(document_vectors)
+    document_vectors = PCA(0.85).fit_transform(document_vectors)
 
     print("Performing t-SNE...")
-    tsne_results = TSNE(n_components=2).fit_transform(pca_results)
+    document_vectors = TSNE(n_components=2).fit_transform(document_vectors)
+
+    print("Creating document clusters...")
+    clustering = KMeans().fit(document_vectors)
+    centers = clustering.cluster_centers_
+    labels = clustering.labels_
+    clusters = {}
+    for doc_coordinate, label in zip(document_vectors, labels):
+        if label not in clusters:
+            clusters[label] = []
+        clusters[label].append(doc_coordinate)
     
-    print("Visualizing documents...")
+    print("Visualizing document clusters...")
     fig = plt.gcf()
-    fig.canvas.set_window_title("Document Representations")
-    first_index = 0
-    times = 0
-    for index, doc_coordinate in enumerate(tsne_results):
-        plt.scatter(doc_coordinate[0], doc_coordinate[1], marker="o", label="Doc. {}".format(index + 1))
-        first_index = last_index
+    fig.canvas.set_window_title("Document Clusters")
+    for label in clusters.keys():
+        x_list = [doc_coordinate[0] for doc_coordinate in clusters[label]]
+        y_list = [doc_coordinate[1] for doc_coordinate in clusters[label]]
+        plt.scatter(x_list, y_list, marker="o", label="Cluster {}".format(label + 1))
     if len(sys.argv) > 1 and sys.argv[1] == "show_legend":
         plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=5, mode="expand", borderaxespad=0.)
     plt.show()
