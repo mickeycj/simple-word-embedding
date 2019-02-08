@@ -17,16 +17,9 @@ english_stop_words = nltk.corpus.stopwords.words("english")
 
 lemmatizer = WordNetLemmatizer()
 
-def lemmatize(word):
-    noun, verb = lemmatizer.lemmatize(word), lemmatizer.lemmatize(word, "v")
-    if len(word) == len(noun):
-        return verb
-    else:
-        return noun
-
 def preprocess(text):
-    return " ".join(lemmatize(w) for w in nltk.wordpunct_tokenize(text)
-        if w.lower() in english_words and w.lower() not in english_stop_words or not w.isalpha())
+    return " ".join(lemmatizer.lemmatize(w) for w, tag in nltk.pos_tag(nltk.wordpunct_tokenize(text))
+        if tag[0] == "N" and w.lower() in english_words and w.lower() not in english_stop_words or not w.isalpha())
 
 def tokenize(document):
     return simple_preprocess(str(document).encode("utf-8"))
