@@ -5,6 +5,7 @@ from gensim.utils import simple_preprocess
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import nltk
+from nltk.stem.wordnet import WordNetLemmatizer
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -14,8 +15,17 @@ from sklearn.preprocessing import StandardScaler
 english_words = set(nltk.corpus.words.words())
 english_stop_words = nltk.corpus.stopwords.words("english")
 
+lemmatizer = WordNetLemmatizer()
+
+def lemmatize(word):
+    noun, verb = lemmatizer.lemmatize(word), lemmatizer.lemmatize(word, "v")
+    if len(word) == len(noun):
+        return verb
+    else:
+        return noun
+
 def preprocess(text):
-    return " ".join(w for w in nltk.wordpunct_tokenize(text)
+    return " ".join(lemmatize(w) for w in nltk.wordpunct_tokenize(text)
         if w.lower() in english_words and w.lower() not in english_stop_words or not w.isalpha())
 
 def tokenize(document):
