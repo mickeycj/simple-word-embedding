@@ -24,13 +24,16 @@ if __name__ == "__main__":
         print("Creating model...")
         w2v = Word2Vec(size=150, window=10, min_count=1, sg=1, workers=10)
 
-        print("Loading training documents...")
+        print("Loading training documents: 0.00%...", end="\r")
         training_docs = []
         documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].dropna().sample(frac=1).reset_index(drop=True)
-        for _, row in documents.iterrows():
+        num_documents = float(len(documents.index))
+        for index, row in documents.iterrows():
+            print("Loading training documents: {:.2f}%...".format((index + 1) / num_documents * 100), end="\r")
             training_docs.append(tokenize(preprocess(row["question1"])))
             if row["is_duplicate"] == 0:
                 training_docs.append(tokenize(preprocess(row["question2"])))
+        print("Loading training documents: 100.00%...")
 
         print("Building vocabulary...")
         w2v.build_vocab(training_docs)
