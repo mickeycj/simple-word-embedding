@@ -1,5 +1,6 @@
 # code specific
 /__pycache__
+/.ipynb_checkpoints
 /.vscode
 /data
 /kv
