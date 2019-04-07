@@ -26,13 +26,11 @@ if __name__ == "__main__":
 
         print("Loading training documents: 0.00%...", end="\r")
         training_docs = []
-        documents = pd.read_csv("./data/train.csv")[["question1", "question2", "is_duplicate"]].dropna().sample(frac=1).reset_index(drop=True)
+        documents = pd.read_csv("./data/scraped_tweets.csv")[["text"]].dropna().sample(frac=1).reset_index(drop=True)
         num_documents = float(len(documents.index))
         for index, row in documents.iterrows():
             print("Loading training documents: {:.2f}%...".format((index + 1) / num_documents * 100), end="\r")
-            training_docs.append(tokenize(preprocess(row["question1"])))
-            if row["is_duplicate"] == 0:
-                training_docs.append(tokenize(preprocess(row["question2"])))
+            training_docs.append(tokenize(preprocess(row["text"])))
         print("Loading training documents: 100.00%...")
 
         print("Building vocabulary...")
@@ -57,8 +55,8 @@ if __name__ == "__main__":
         w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
         print("Loading testing documents...")
-        documents = pd.read_csv("./data/test.csv", dtype=object)[["question1"]].dropna().sample(n=2).reset_index(drop=True)
-        testing_docs = list(map(lambda index__row: set(tokenize(preprocess(index__row[1]["question1"]))), documents.iterrows()))
+        documents = pd.read_csv("./data/scraped_tweets.csv", dtype=object)[["text"]].dropna().sample(n=2).reset_index(drop=True)
+        testing_docs = list(map(lambda index__row: set(tokenize(preprocess(index__row[1]["text"]))), documents.iterrows()))
 
         if command == "test_word_sim":
             print("Finding similar words...")
