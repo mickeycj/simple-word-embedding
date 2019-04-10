@@ -9,7 +9,7 @@ def preprocess_tweet(tweet):
                          re.sub(r'@\S+', '', tweet)))
 
 if __name__ == "__main__":
-    twitters = ['Youtube', 'Twitter', 'instagram',
+    users = ['Youtube', 'Twitter', 'instagram',
                 'BBCBreaking', 'Reuters', 'cnnbrk', 'nytimes',
                 'ExpressTechie', 'techreview', 'hcltech', 'NASA_Technology',
                 'Inspire_Us', 'BuddhaQuotes', 'wordstionary',
@@ -17,14 +17,18 @@ if __name__ == "__main__":
                 'realDonaldTrump', 'BillGates', 'jimmyfallon']
     
     tweets = []
-    for twitter in twitters:
-        print(f'Scraping @{twitter}...')
-        tweets.extend([tweet for tweet in get_tweets(user=twitter)])
+    for user in users:
+        print(f'Scraping @{user}...')
+        t_list = []
+        for tweet in get_tweets(user=user):
+            tweet['user'] = user
+            t_list.append(tweet)
+        tweets.extend(t_list)
     
     print('Creating dataframe...')
     df = pd.DataFrame(tweets)
-    df = df[['tweetId', 'time', 'text', 'replies', 'retweets', 'likes']]
-    df['text'] = df['text'].apply(preprocess_tweet)
+    df['clean_text'] = df['text'].apply(preprocess_tweet)
+    df = df[['tweetId', 'time', 'user', 'text', 'clean_text', 'replies', 'retweets', 'likes']]
 
     print('Saving as CSV file...')
     df.to_csv('./data/scraped_tweets.csv', index=False)
