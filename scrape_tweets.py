@@ -5,11 +5,11 @@ from twitter_scraper import get_tweets
 
 if __name__ == "__main__":
     users = ['Youtube', 'Twitter', 'instagram',
-                'BBCBreaking', 'Reuters', 'cnnbrk', 'nytimes',
-                'ExpressTechie', 'techreview', 'hcltech', 'NASA_Technology',
-                'Inspire_Us', 'BuddhaQuotes', 'wordstionary',
-                'BarackObama', 'justinbieber', 'Cristiano',
-                'realDonaldTrump', 'BillGates', 'jimmyfallon']
+             'BBCBreaking', 'Reuters', 'cnnbrk', 'nytimes',
+             'ExpressTechie', 'techreview', 'hcltech', 'NASA_Technology',
+             'Inspire_Us', 'BuddhaQuotes', 'wordstionary',
+             'BarackObama', 'justinbieber', 'Cristiano',
+             'realDonaldTrump', 'BillGates', 'jimmyfallon']
     
     tweets = []
     for user in users:
