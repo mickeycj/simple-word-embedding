@@ -25,4 +25,7 @@ if __name__ == "__main__":
     df = df[['tweetId', 'time', 'user', 'text', 'likes', 'retweets', 'replies']]
 
     print('Saving as CSV file...')
-    df.to_csv('./data/scraped_tweets.csv', index=False)
+    path = './data/'
+    if not os.path.exists(path):
+        os.mkdir(path)
+    df.to_csv('{}{}'.format(path, 'scraped_tweets.csv'), index=False)

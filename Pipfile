@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+jupyter = "*"
+gensim = "*"
+matplotlib = "*"
+nltk = "*"
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+twitter-scraper = "*"
+pylint = "*"
+
+[scripts]
+scrape_tweets = "python scrape_tweets.py"
+train = "python run_gensim.py train"
+
+[requires]
+python_version = "3.6"
