@@ -15,10 +15,15 @@ pandas = "*"
 scikit-learn = "*"
 twitter-scraper = "*"
 pylint = "*"
+langdetect = "*"
+tweet-preprocessor = "*"
+pyemd = "*"
 
 [scripts]
 scrape_tweets = "python scrape_tweets.py"
 train = "python run_gensim.py train"
+test_word = "python run_gensim.py test_word_sim"
+test_doc = "python run_gensim.py test_doc_sim"
 
 [requires]
 python_version = "3.6"
