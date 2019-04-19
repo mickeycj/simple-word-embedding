@@ -114,7 +114,7 @@ if __name__ == "__main__":
     command = sys.argv[1]
     if command == "train":
         print("Creating model...")
-        w2v = Word2Vec(size=150, window=10, min_count=1, sg=1, workers=10)
+        w2v = Word2Vec(size=100, window=10, min_count=1, sg=1, workers=10)
 
         training_docs = []
         documents = pd.read_csv("./data/scraped_tweets.csv")[["text"]].dropna(subset=['text']).sample(frac=1).reset_index(drop=True)
