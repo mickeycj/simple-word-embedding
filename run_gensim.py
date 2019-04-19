@@ -117,7 +117,7 @@ if __name__ == "__main__":
         w2v = Word2Vec(size=150, window=10, min_count=1, sg=1, workers=10)
 
         training_docs = []
-        documents = pd.read_csv("./data/scraped_tweets.csv")[["text"]].dropna().sample(frac=1).reset_index(drop=True)
+        documents = pd.read_csv("./data/scraped_tweets.csv")[["text"]].dropna(subset=['text']).sample(frac=1).reset_index(drop=True)
         documents = preprocess(documents)
         num_documents = float(len(documents.index))
         print("Loading training documents: 0.00%...", end="\r")
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         w2v = KeyedVectors.load("./kv/gensim_w2v.kv")
 
         print("Loading testing documents...")
-        documents = pd.read_csv("./data/scraped_tweets.csv", dtype=object)[["text"]].dropna().sample(n=2).reset_index(drop=True)
+        documents = pd.read_csv("./data/scraped_tweets.csv", dtype=object)[["text"]].dropna(subset=['text']).sample(n=2).reset_index(drop=True)
         documents = preprocess(documents)
         testing_docs = list(map(lambda index__row: set(index__row[1]["cleanText"].split()), documents.iterrows()))
 
