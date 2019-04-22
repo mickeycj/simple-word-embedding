@@ -18,7 +18,7 @@ if __name__ == "__main__":
     for user in users:
         print(f'Scraping @{user}...')
         t_list = []
-        for tweet in get_tweets(user=user, pages=30):
+        for tweet in get_tweets(user=user, pages=50):
             tweet['user'] = user
             t_list.append(tweet)
         tweets.extend(t_list)
